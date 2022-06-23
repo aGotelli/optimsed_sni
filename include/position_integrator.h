@@ -35,6 +35,8 @@ private:
 
     const std::vector<Eigen::Vector3d> m_Lambda_stack;
 
+    Eigen::Quaterniond m_q_at_chebushev_point;
+
     const Eigen::MatrixXd m_Dn_NN_inv { m_Dn_NN.inverse() };
 
     Eigen::MatrixXd m_ivp { Eigen::MatrixXd::Zero(m_number_of_chebychev_points-1, m_state_dimension) };

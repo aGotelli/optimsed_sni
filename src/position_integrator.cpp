@@ -20,18 +20,22 @@ Positionintegrator::Positionintegrator(const unsigned int t_number_of_chebychev_
 
 void Positionintegrator::updateb(const Eigen::MatrixXd &t_Q_stack)
 {
-    Eigen::Quaterniond q;
+
 
     for (unsigned int i = 0; i < m_number_of_chebychev_points-1; ++i) {
 
 
-        q = { t_Q_stack(i),
-              t_Q_stack(i  +  (m_number_of_chebychev_points-1)),
-              t_Q_stack(i + 2*(m_number_of_chebychev_points-1)),
-              t_Q_stack(i + 3*(m_number_of_chebychev_points-1)) };
+        m_q_at_chebushev_point = { t_Q_stack(i),
+                                    t_Q_stack(i  +  (m_number_of_chebychev_points-1)),
+                                    t_Q_stack(i + 2*(m_number_of_chebychev_points-1)),
+                                    t_Q_stack(i + 3*(m_number_of_chebychev_points-1)) };
 
+        m_b_NN.block(i, 0, 1, 3) = (m_q_at_chebushev_point.toRotationMatrix()*m_Lambda_stack[i]).transpose();
 
-        m_b_NN.block(i, 0, 1, 3) = (q.toRotationMatrix()*Eigen::Vector3d(1, 0, 0)).transpose();
+//        m_b_NN.block(i, 0, 1, 3) = (m_q_at_chebushev_point * Eigen::Quaterniond(0,
+//                                                           m_Lambda_stack[i](0),
+//                                                           m_Lambda_stack[i](1),
+//                                                           m_Lambda_stack[i](2)) ).coeffs().block(0, 0, 3, 1).transpose();
 
     }
 }
