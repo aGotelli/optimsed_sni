@@ -64,6 +64,14 @@ int main()
     constexpr unsigned int ne = 3;
     constexpr unsigned int na = 3;
     Eigen::Matrix<double, ne*na, 1> qe;
+    
+    
+    std::vector<Eigen::Matrix<double, na, na*ne>> Phi_stack(number_of_chebyshev_points);
+    for(unsigned int i=0; i<number_of_chebyshev_points; i++)
+        Phi_stack[i] = Phi(x[i], na, ne);
+    
+    
+    
     //  Here we give some value for the strain
     qe <<   0,
             0,
@@ -78,7 +86,7 @@ int main()
 
     std::vector<Eigen::Vector3d> K_stack(number_of_chebyshev_points);
     for(unsigned int i=0; i<number_of_chebyshev_points; i++)
-        K_stack[i] = Phi(x[i], na, ne)*qe;
+        K_stack[i] = Phi_stack[i]*qe;
 
     std::vector<Eigen::Vector3d> Lambda_stack(number_of_chebyshev_points);
     for(unsigned int i=0; i<number_of_chebyshev_points; i++)
@@ -92,12 +100,12 @@ int main()
     Eigen::Vector4d Q_init(1, 0, 0, 0);
     Q_integrator->Integrate(Q_init);
 
-    std::cout << "Solution quaternions : \n" << Q_integrator->getStack() << std::endl;
+    //std::cout << "Solution quaternions : \n" << Q_integrator->getStack() << std::endl;
 
     Eigen::Vector3d r_init(0, 0, 0);
     r_integrator->Integrate(r_init);
 
-    std::cout << "Solution positions : \n" << r_integrator->getStack() << std::endl;
+    //std::cout << "Solution positions : \n" << r_integrator->getStack() << std::endl;
 
     return 0;
 }
